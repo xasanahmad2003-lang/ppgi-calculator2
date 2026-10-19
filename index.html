@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PPGI Calculator</title>
+<style>
+body{font-family:Arial;background:#f1f5f9;padding:16px;margin:0}
+main{max-width:480px;margin:auto;background:white;padding:20px;border-radius:14px}
+h2{color:#075985}
+label{display:block;margin-top:12px;font-weight:bold}
+input,select,button{width:100%;box-sizing:border-box;padding:12px;margin-top:6px;border:1px solid #bbb;border-radius:8px;font-size:16px}
+button{background:#0369a1;color:white;border:0;margin-top:18px}
+.result{background:#e0f2fe;padding:14px;border-radius:10px;margin-top:18px;line-height:1.8}
+</style>
+</head>
+<body>
+<main>
+<h2>PPGI Calculator</h2>
+<label>Thickness (mm)</label>
+<select id="t" onchange="calc()">
+<option>0.14</option><option>0.15</option><option>0.16</option>
+<option>0.18</option><option>0.19</option><option>0.20</option>
+<option>0.22</option><option>0.24</option><option>0.25</option>
+<option>0.26</option><option>0.28</option><option>0.30</option>
+<option>0.32</option>
+</select>
+<label>Qiimaha hal ton ($)</label>
+<input id="price" type="number" min="0" placeholder="Tusaale: 800" oninput="calc()">
+<label>Tirada ton-ka</label>
+<input id="tons" type="number" min="0" value="28" oninput="calc()">
+<label>Gaadiid iyo kharash kale ($)</label>
+<input id="extra" type="number" min="0" value="0" oninput="calc()">
+<div class="result" id="out">Geli qiimaha ton-ka si xisaabtu u soo baxdo.</div>
+<button onclick="copyResult()">Nuqul ka samee natiijada</button>
+<script>
+function calc(){
+let t=Number(document.getElementById('t').value);
+let price=Number(document.getElementById('price').value);
+let tons=Number(document.getElementById('tons').value);
+let extra=Number(document.getElementById('extra').value);
+let small=t<=0.16;
+let w=small?90:120, l=small?244:300;
+let clearance=small?0.50:1.50;
+let kg=t*(w/100)*(l/100)*7.85;
+let pcsTon=1000/kg;
+let pcs=Math.floor(tons*1000/kg);
+let goods=tons*price;
+let clearTotal=pcs*clearance;
+let total=goods+clearTotal+extra;
+if(tons<=0 || price<0 || extra<0){
+document.getElementById('out').innerHTML='Fadlan geli xog sax ah.';
+return;
+}
+document.getElementById('out').innerHTML=
+'<b>Cabbirka:</b> '+w+' × '+l+' cm<br>'+
+'<b>Clearance/PCS:</b> $'+clearance.toFixed(2)+'<br>'+
+'<b>Miisaanka PCS:</b> '+kg.toFixed(3)+' kg (qiyaas)<br>'+
+'<b>PCS halkii ton:</b> '+Math.floor(pcsTon).toLocaleString()+'<br>'+
+'<b>PCS guud:</b> '+pcs.toLocaleString()+'<hr>'+
+'<b>Qiimaha alaabta:</b> $'+goods.toLocaleString(undefined,{maximumFractionDigits:2})+'<br>'+
+'<b>Clearance guud:</b> $'+clearTotal.toLocaleString(undefined,{maximumFractionDigits:2})+'<br>'+
+'<b>Kharash kale:</b> $'+extra.toFixed(2)+'<br>'+
+'<b>WADARTA:</b> $'+total.toLocaleString(undefined,{maximumFractionDigits:2})+'<br>'+
+'<b>Kharashka ton-kiiba:</b> $'+(total/tons).toFixed(2)+'<br>'+
+'<b>Kharashka PCS-kiiba:</b> $'+(total/pcs).toFixed(4);
+}
+function copyResult(){
+navigator.clipboard.writeText(document.getElementById('out').innerText)
+.then(()=>alert('Natiijada waa la koobiyeeyay'))
+.catch(()=>alert('Fadlan dooro natiijada oo gacanta ku koobiyee'));
+}
+calc();
+</script>
+</main>
+</body>
+</html>
